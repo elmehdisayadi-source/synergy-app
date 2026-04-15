@@ -1,0 +1,143 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "Basic user profile information",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Firebase Auth UID" },
+        "displayName": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "photoURL": { "type": "string", "format": "uri" },
+        "role": { "type": "string", "enum": ["user", "coach", "admin"] },
+        "coins": { "type": "number", "description": "Current coin balance" },
+        "bio": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "lastActive": { "type": "string", "format": "date-time" },
+        "compatibilityTags": { "type": "array", "items": { "type": "string" } }
+      },
+      "required": ["uid", "role", "coins"]
+    },
+    "Coach": {
+      "title": "Coach",
+      "description": "Extended profile for mentors/creators",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "specialty": { "type": "string" },
+        "ratePerChat": { "type": "number" },
+        "rating": { "type": "number" },
+        "reviewCount": { "type": "number" },
+        "isVerified": { "type": "boolean" },
+        "featuredImage": { "type": "string", "format": "uri" }
+      },
+      "required": ["uid", "specialty", "ratePerChat"]
+    },
+    "Chat": {
+      "title": "Chat",
+      "description": "Metadata for a conversation between two users",
+      "type": "object",
+      "properties": {
+        "chatId": { "type": "string" },
+        "participants": { "type": "array", "items": { "type": "string" } },
+        "lastMessage": { "type": "string" },
+        "lastTimestamp": { "type": "string", "format": "date-time" },
+        "unreadCount": { "type": "object" }
+      },
+      "required": ["chatId", "participants"]
+    },
+    "Message": {
+      "title": "Message",
+      "description": "Individual message in a chat",
+      "type": "object",
+      "properties": {
+        "messageId": { "type": "string" },
+        "senderId": { "type": "string" },
+        "text": { "type": "string" },
+        "type": { "type": "string", "enum": ["text", "voice", "insight"] },
+        "isLocked": { "type": "boolean" },
+        "unlockCost": { "type": "number" },
+        "unlockedBy": { "type": "array", "items": { "type": "string" } },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["senderId", "text", "timestamp"]
+    },
+    "Transaction": {
+      "title": "Transaction",
+      "description": "Log of coin purchases or usage",
+      "type": "object",
+      "properties": {
+        "transactionId": { "type": "string" },
+        "userId": { "type": "string" },
+        "amount": { "type": "number" },
+        "type": { "type": "string", "enum": ["purchase", "spend", "earn", "payout"] },
+        "description": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "amount", "type", "timestamp"]
+    },
+    "Match": {
+      "title": "Match",
+      "description": "Compatibility match between two users",
+      "type": "object",
+      "properties": {
+        "matchId": { "type": "string" },
+        "users": { "type": "array", "items": { "type": "string" } },
+        "compatibilityScore": { "type": "number" },
+        "goals": { "type": "array", "items": { "type": "string" } },
+        "status": { "type": "string", "enum": ["pending", "active", "ignored"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["users", "status"]
+    },
+    "Subscription": {
+      "title": "Subscription",
+      "description": "Premium membership status",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "planId": { "type": "string", "enum": ["free", "silver", "gold", "alchemist"] },
+        "status": { "type": "string", "enum": ["active", "expired", "canceled"] },
+        "expiresAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "planId", "status"]
+    },
+    "Notification": {
+      "title": "Notification",
+      "description": "In-app alerts",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "title": { "type": "string" },
+        "body": { "type": "string" },
+        "type": { "type": "string", "enum": ["message", "match", "payment", "system"] },
+        "isRead": { "type": "boolean" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "title", "body", "timestamp"]
+    },
+    "Boost": {
+      "title": "Boost",
+      "description": "Profile visibility boost",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "startTime": { "type": "string", "format": "date-time" },
+        "endTime": { "type": "string", "format": "date-time" },
+        "multiplier": { "type": "number" }
+      },
+      "required": ["userId", "startTime", "endTime"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": { "schema": "User", "description": "User profiles" },
+    "/coaches/{userId}": { "schema": "Coach", "description": "Coach specific data" },
+    "/chats/{chatId}": { "schema": "Chat", "description": "Chat sessions" },
+    "/chats/{chatId}/messages/{messageId}": { "schema": "Message", "description": "Messages within a chat" },
+    "/transactions/{transactionId}": { "schema": "Transaction", "description": "Financial logs" },
+    "/matches/{matchId}": { "schema": "Match", "description": "User matches" },
+    "/subscriptions/{userId}": { "schema": "Subscription", "description": "User subscriptions" },
+    "/notifications/{notifId}": { "schema": "Notification", "description": "User notifications" },
+    "/boosts/{boostId}": { "schema": "Boost", "description": "Profile boosts" }
+  }
+}
